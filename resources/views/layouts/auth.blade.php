@@ -38,7 +38,7 @@
       height: 220px;
       object-fit: cover;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 
     .images img.large {
@@ -52,7 +52,7 @@
       background: #fff;
       padding: 40px;
       border-radius: 15px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
 
@@ -93,7 +93,7 @@
 
     .form-group input:focus {
       border-color: #10c67c;
-      box-shadow: 0 0 5px rgba(16,198,124,0.3);
+      box-shadow: 0 0 5px rgba(16, 198, 124, 0.3);
     }
 
     .btn {
@@ -104,7 +104,7 @@
       font-size: 16px;
       font-weight: bold;
       background: linear-gradient(90deg, #10c67c, #05a36b);
-      color: white;
+      color: #fff;
       cursor: pointer;
       transition: 0.3s;
     }
@@ -113,6 +113,7 @@
       opacity: 0.9;
     }
 
+    /* Responsive */
     @media (max-width: 900px) {
       .container {
         flex-direction: column;
@@ -133,26 +134,29 @@
   <div class="container">
     <!-- Bagian Gambar -->
     <div class="images">
-      <img src="assets\payday.png" alt="Payday">
-      <img src="assets\payment.png" alt="Card Payment">
-      <img src="assets\schedule.png" alt="Schedule" class="large">
+      <img src="assets/payday.png" alt="Payday">
+      <img src="assets/payment.png" alt="Card Payment">
+      <img src="assets/schedule.png" alt="Schedule" class="large">
     </div>
 
     <!-- Bagian Form Login -->
     <div class="login-box">
       <div class="logo">
-        <img src="assets\logo-qrion.png" alt="Qrion Logo">
+        <img src="assets/logo-qrion.png" alt="Qrion Logo">
       </div>
+
       <h2>Sign In</h2>
       <p>Start by signing in to your account.</p>
-      
+
       <form>
         <div class="form-group">
           <input type="text" placeholder="Username or Email Address">
         </div>
+
         <div class="form-group">
           <input type="password" placeholder="Password">
         </div>
+
         <button type="submit" class="btn">Sign In</button>
       </form>
     </div>
