@@ -2,15 +2,10 @@
 
 @section('content')
 <div class="container py-4">
-<<<<<<< HEAD
-
-=======
->>>>>>> f33df973db1ec27cd815fb27c6f765ca5a0ff52b
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="fw-bold mb-0 text-gradient">📂 Daftar Blog</h2>
 
-<<<<<<< HEAD
         {{-- Filter kategori & tombol tambah content --}}
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 w-100">
             <form method="GET" action="{{ route('admin.content.index') }}" class="d-flex flex-grow-1 gap-2 flex-wrap">
@@ -18,12 +13,6 @@
                        placeholder="🔍 Cari blog..." value="{{ request('search') }}">
 
                 <select name="category" class="form-select rounded-pill shadow-sm min-w-150" onchange="this.form.submit()">
-=======
-        <div class="d-flex gap-2 flex-wrap">
-            {{-- 🔍 Filter Kategori --}}
-            <form method="GET" action="{{ route('admin.content.index') }}">
-                <select name="category" class="form-select d-inline w-auto shadow-sm rounded-pill" onchange="this.form.submit()">
->>>>>>> f33df973db1ec27cd815fb27c6f765ca5a0ff52b
                     <option value="">-- Semua Kategori --</option>
                     @foreach($categories as $cat)
                         <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
@@ -33,12 +22,7 @@
                 </select>
             </form>
 
-<<<<<<< HEAD
             <a href="{{ route('admin.content.create') }}" class="btn btn-gradient-add shadow-sm mt-2 mt-md-0">
-=======
-            {{-- Tombol tambah content --}}
-            <a href="{{ route('admin.content.create') }}" class="btn btn-gradient shadow-sm">
->>>>>>> f33df973db1ec27cd815fb27c6f765ca5a0ff52b
                 + Tambah Blog
             </a>
         </div>
@@ -82,29 +66,15 @@
                             </td>
                             <td>{{ $content->created_at->format('d M Y H:i') }}</td>
                             <td class="text-center">
-<<<<<<< HEAD
                                 <a href="{{ route('admin.content.show', $content->id) }}" class="btn btn-sm btn-info text-white shadow-sm">Detail</a>
                                 <a href="{{ route('admin.content.edit', $content->id) }}" class="btn btn-sm btn-warning shadow-sm">Edit</a>
 
                                 {{-- Form DELETE langsung --}}
                                 <form action="{{ route('admin.content.destroy', $content->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus konten ini?')">
-=======
-                                <a href="{{ route('admin.content.show', $content->id) }}" class="btn btn-sm btn-info text-white shadow-sm">
-                                    Detail
-                                </a>
-                                <a href="{{ route('admin.content.edit', $content->id) }}" class="btn btn-sm btn-warning shadow-sm">
-                                    Edit
-                                </a>
-                                <form action="{{ route('admin.content.destroy', $content->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin mau hapus konten ini?')">
->>>>>>> f33df973db1ec27cd815fb27c6f765ca5a0ff52b
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger shadow-sm">Hapus</button>
                                 </form>
-<<<<<<< HEAD
-
-=======
->>>>>>> f33df973db1ec27cd815fb27c6f765ca5a0ff52b
                             </td>
                         </tr>
                     @empty
