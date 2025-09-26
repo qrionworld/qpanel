@@ -11,18 +11,20 @@ use App\Http\Resources\ContentResource;
 class ContentApiController extends Controller
 {
     // GET all contents
-    public function index()
-    {
-        $contents = Content::with('images')->latest()->paginate(10);
-        return ContentResource::collection($contents);
-    }
+   // GET all contents
+public function index()
+{
+    $contents = Content::with(['images', 'category'])->latest()->paginate(10);
+    return ContentResource::collection($contents);
+}
 
-    // GET single content
-    public function show($id)
-    {
-        $content = Content::with('images')->findOrFail($id);
-        return new ContentResource($content);
-    }
+// GET single content
+public function show($id)
+{
+    $content = Content::with(['images', 'category'])->findOrFail($id);
+    return new ContentResource($content);
+}
+
 
     // CREATE content
     public function store(Request $request)
@@ -45,7 +47,8 @@ class ContentApiController extends Controller
             }
         }
 
-        return new ContentResource($content->load('images'));
+        return new ContentResource($content->load(['images', 'category']));
+
     }
 
     // UPDATE content
@@ -82,7 +85,8 @@ class ContentApiController extends Controller
             }
         }
 
-        return new ContentResource($content->load('images'));
+        return new ContentResource($content->load(['images', 'category']));
+
     }
 
     // DELETE content
