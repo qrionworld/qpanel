@@ -72,7 +72,8 @@
                                     {!! Str::limit($content->body, 120) !!}
                                 </div>
                             </td>
-                            <td>{{ $content->created_at->format('d M Y H:i') }}</td>
+                            <td>{{ $content->created_at->timezone('Asia/Jakarta')->translatedFormat('d M Y H:i') }}</td>
+
                             <td class="text-center">
                                 <a href="{{ route('admin.content.show', $content->id) }}" class="btn btn-sm btn-info text-white shadow-sm">Detail</a>
                                 <a href="{{ route('admin.content.edit', $content->id) }}" class="btn btn-sm btn-warning shadow-sm">Edit</a>

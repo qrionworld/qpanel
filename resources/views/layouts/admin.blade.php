@@ -212,9 +212,6 @@
             </ul>
         </div>
 
-        <!-- Dark Mode -->
-        <button id="darkModeBtn" class="btn btn-darkmode p-2 shadow-sm" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
-
         <!-- Profile/Admin -->
         <div class="dropdown">
             <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
@@ -227,7 +224,6 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3">
                 <li><a class="dropdown-item" href="{{ route('admin.profile.index') }}"><i class="bi bi-person me-2"></i> Profil</a></li>
-                <li><a class="dropdown-item" href="{{ route('admin.settings.index') }}"><i class="bi bi-gear me-2"></i> Pengaturan</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                     <form action="{{ route('logout') }}" method="POST" class="m-0">
@@ -293,30 +289,7 @@ body.dark-mode .navbar-custom {
         @yield('content')
     </div>
 
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const btn = document.getElementById("darkModeBtn");
-            if (document.body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                btn.innerHTML = "☀️";
-            } else {
-                localStorage.setItem('theme', 'light');
-                btn.innerHTML = "🌙";
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const btn = document.getElementById("darkModeBtn");
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-mode');
-                btn.innerHTML = "☀️";
-            }
-        });
+   
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @yield('scripts')

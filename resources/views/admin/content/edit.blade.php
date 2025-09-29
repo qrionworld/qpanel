@@ -33,15 +33,33 @@
         {{-- Kategori --}}
         <div class="mb-3">
             <label for="category" class="form-label">Kategori</label>
-            <input list="categories" name="category" id="category" 
-                   class="form-control" 
-                   value="{{ old('category', $content->category->name ?? '') }}"
-                   required>
-            <datalist id="categories">
-                @foreach($categories as $cat)
-                    <option value="{{ $cat }}"></option>
-                @endforeach
-            </datalist>
+            <div class="row">
+                {{-- Dropdown kategori --}}
+                <div class="col-md-6">
+                    <select name="category" id="category" class="form-select" {{ old('new_category') ? 'disabled' : '' }}>
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat }}" 
+                                {{ old('category', $content->category->name ?? '') == $cat ? 'selected' : '' }}>
+                                {{ $cat }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Input kategori baru --}}
+                <div class="col-md-6">
+                    <input 
+                        type="text" 
+                        name="new_category" 
+                        id="new_category"
+                        class="form-control"
+                        placeholder="Atau tambah kategori baru"
+                        value="{{ old('new_category') }}"
+                    >
+                </div>
+            </div>
+            <small class="text-muted">Pilih kategori lama atau isi kategori baru.</small>
         </div>
 
         {{-- Deskripsi pakai Quill --}}
@@ -52,34 +70,32 @@
         </div>
 
         {{-- Upload Gambar Baru --}}
-<div class="mb-3">
-    <label for="images" class="form-label">Upload Gambar Baru</label>
-    <input type="file" name="images[]" id="images" class="form-control" multiple accept="image/*">
-    <small class="text-muted">Bisa pilih lebih dari satu gambar.</small>
+        <div class="mb-3">
+            <label for="images" class="form-label">Upload Gambar Baru</label>
+            <input type="file" name="images[]" id="images" class="form-control" multiple accept="image/*">
+            <small class="text-muted">Bisa pilih lebih dari satu gambar.</small>
+            <div id="preview" class="d-flex gap-3 flex-wrap mt-3"></div>
+        </div>
 
-    {{-- Preview Gambar Baru --}}
-    <div id="preview" class="d-flex gap-3 flex-wrap mt-3"></div>
-</div>
-
-        {{-- Preview Gambar Lama --}}
         {{-- Gambar Lama --}}
-<div class="mb-3">
-    <label class="form-label">Gambar Lama</label>
-    <div class="d-flex gap-3 flex-wrap">
-        @foreach($content->images as $img)
-            <div class="text-center">
-                <img src="{{ asset('storage/' . $img->path) }}" 
-                     alt="Gambar lama"
-                     class="rounded mb-1"
-                     style="width:100px; height:70px; object-fit:cover;">
-                <div>
-                    <input type="checkbox" name="delete_images[]" value="{{ $img->id }}">
-                    <small>Hapus</small>
-                </div>
+        <div class="mb-3">
+            <label class="form-label">Gambar Lama</label>
+            <div class="d-flex gap-3 flex-wrap">
+                @foreach($content->images as $img)
+                    <div class="text-center">
+                        <img src="{{ asset('storage/' . $img->path) }}" 
+                             alt="Gambar lama"
+                             class="rounded mb-1"
+                             style="width:100px; height:70px; object-fit:cover;">
+                        <div>
+                            <input type="checkbox" name="delete_images[]" value="{{ $img->id }}">
+                            <small>Hapus</small>
+                        </div>
+                    </div>
+                @endforeach
             </div>
-        @endforeach
-    </div>
-</div>
+        </div>
+
         <button type="submit" class="btn btn-success">Update</button>
         <a href="{{ route('admin.content.index') }}" class="btn btn-secondary">Batal</a>
     </form>
@@ -104,6 +120,18 @@
 
     document.querySelector('#contentForm').addEventListener('submit', function() {
         document.querySelector('#body').value = quill.root.innerHTML;
+    });
+
+    // 🔹 Toggle kategori lama / baru
+    const newCategory = document.getElementById('new_category');
+    const categorySelect = document.getElementById('category');
+
+    newCategory.addEventListener('input', function () {
+        if (this.value.trim() !== "") {
+            categorySelect.disabled = true;
+        } else {
+            categorySelect.disabled = false;
+        }
     });
 </script>
 @endsection

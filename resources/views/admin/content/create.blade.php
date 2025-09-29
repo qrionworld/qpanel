@@ -33,23 +33,49 @@
         </div>
 
         {{-- Kategori --}}
-        <div class="mb-3">
-            <label for="category" class="form-label">Kategori</label>
-            <input 
-                list="categories" 
-                name="category" 
-                id="category" 
-                class="form-control" 
-                value="{{ old('category') }}"
-                placeholder="Pilih atau ketik kategori baru"
-                required
-            >
-            <datalist id="categories">
+<div class="mb-3">
+    <label for="category" class="form-label">Kategori</label>
+    <div class="row">
+        {{-- Dropdown kategori --}}
+        <div class="col-md-6">
+            <select name="category" id="category" class="form-select" {{ old('new_category') ? 'disabled' : '' }}>
+                <option value="">-- Pilih Kategori --</option>
                 @foreach($categories as $cat)
-                    <option value="{{ $cat }}"></option>
+                    <option value="{{ $cat }}" {{ old('category') == $cat ? 'selected' : '' }}>
+                        {{ $cat }}
+                    </option>
                 @endforeach
-            </datalist>
+            </select>
         </div>
+
+        {{-- Input kategori baru --}}
+        <div class="col-md-6">
+            <input 
+                type="text" 
+                name="new_category" 
+                id="new_category"
+                class="form-control"
+                placeholder="Atau tambah kategori baru"
+                value="{{ old('new_category') }}"
+            >
+        </div>
+    </div>
+    <small class="text-muted">Pilih kategori yang sudah ada atau tambahkan kategori baru.</small>
+</div>
+
+<script>
+    const newCategory = document.getElementById('new_category');
+    const categorySelect = document.getElementById('category');
+
+    newCategory.addEventListener('input', function () {
+        if (this.value.trim() !== "") {
+            categorySelect.disabled = true;
+        } else {
+            categorySelect.disabled = false;
+        }
+    });
+</script>
+
 
         {{-- Deskripsi pakai Quill --}}
         <div class="mb-3">

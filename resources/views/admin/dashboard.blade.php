@@ -34,22 +34,6 @@
         </div>
     </div>
 </div>
-
-        {{-- Total Settings --}}
-        <div class="col-md-4">
-            <div class="card dashboard-card gradient-yellow shadow-lg border-0 rounded-4 h-100">
-                <div class="card-body d-flex align-items-center">
-                    <div class="icon-box me-3">
-                        <i class="bi bi-gear-fill"></i>
-                    </div>
-                    <div>
-                        <h6 class="text-dark-50 mb-1">Total Pengaturan</h6>
-                        <h3 class="fw-bold text-dark">{{ $totalSettings }}</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 @endsection

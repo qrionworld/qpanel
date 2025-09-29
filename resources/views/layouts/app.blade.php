@@ -129,33 +129,10 @@
     <a href="{{ route('admin.categories.index') }}">
         <i class="bi bi-tags"></i><span>Categories</span>
     </a>
-
-    {{-- Settings --}}
-    <a href="{{ route('admin.settings.index') }}">
-        <i class="bi bi-gear"></i><span>Settings</span>
-    </a>
 </div>
-
-    {{-- Main Content --}}
-    <div class="content">
-        <div class="navbar-custom">
-            <button class="btn btn-sm btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
-        </div>
         <hr>
         @yield('content')
     </div>
 
-    {{-- Bootstrap Icons --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-        }
-    </script>
 </body>
 </html>
