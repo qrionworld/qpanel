@@ -182,8 +182,7 @@
 
     {{-- Main Content --}}
     <div class="content flex-grow-1">
-        <!-- Navbar -->
-<!-- Navbar -->
+ 
 <!-- Navbar -->
 <div class="navbar-custom d-flex justify-content-between align-items-center px-3 shadow-sm">
     <!-- Kiri: bisa kosong atau breadcrumb -->
@@ -197,11 +196,6 @@
         <div class="dropdown">
             <button class="btn btn-light position-relative rounded-circle shadow-sm p-2" data-bs-toggle="dropdown" title="Notifikasi">
                 <i class="bi bi-bell fs-5"></i>
-                @if(isset($notifications) && $notifications->count() > 0)
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {{ $notifications->count() }}
-                </span>
-                @endif
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3" style="width: 300px; max-height: 350px; overflow-y: auto;">
                 <li class="dropdown-header fw-bold">🔔 Notifikasi</li>
@@ -265,7 +259,6 @@
 .content {
     flex-grow: 1;
     padding: 20px;
-    margin-top: 80px; /* tinggi navbar */
 }
 
 body.dark-mode .navbar-custom {

@@ -5,27 +5,35 @@
     {{-- Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="fw-bold mb-0 text-gradient">📂 Daftar Blog</h2>
+    </div>
 
-        {{-- Filter kategori & tombol tambah content --}}
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 w-100">
-            <form method="GET" action="{{ route('admin.content.index') }}" class="d-flex flex-grow-1 gap-2 flex-wrap">
-                <input type="text" name="search" class="form-control rounded-pill shadow-sm flex-grow-1 min-w-150" 
-                       placeholder="🔍 Cari blog..." value="{{ request('search') }}">
+    {{-- Search + Filter + Tambah Blog --}}
+    <div class="d-flex justify-content-between align-items-center mb-3 gap-2 flex-wrap">
+        <form method="GET" action="{{ route('admin.content.index') }}" 
+              class="d-flex flex-grow-1 gap-2 flex-wrap flex-md-nowrap">
 
-                <select name="category" class="form-select rounded-pill shadow-sm min-w-150" onchange="this.form.submit()">
-                    <option value="">-- Semua Kategori --</option>
-                    @foreach($categories as $cat)
-                        <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
-                            {{ $cat->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
+            {{-- Input search --}}
+            <input type="text" name="search" 
+                   class="form-control rounded-pill shadow-sm" 
+                   placeholder="🔍 Cari blog..." 
+                   value="{{ request('search') }}">
 
-            <a href="{{ route('admin.content.create') }}" class="btn btn-gradient-add shadow-sm mt-2 mt-md-0">
-                + Tambah Blog
-            </a>
-        </div>
+            {{-- Dropdown kategori --}}
+            <select name="category" class="form-select rounded-pill shadow-sm min-w-150"
+                    onchange="this.form.submit()">
+                <option value="">-- Semua Kategori --</option>
+                @foreach($categories as $cat)
+                    <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
+                        {{ $cat->name }}
+                    </option>
+                @endforeach
+            </select>
+        </form>
+
+        {{-- Tombol tambah blog --}}
+        <a href="{{ route('admin.content.create') }}" class="btn btn-success shadow-sm">
+            + Tambah Blog
+        </a>
     </div>
 
     {{-- Tabel content --}}
@@ -106,21 +114,8 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-.btn-gradient-add {
-    background: linear-gradient(135deg, #ff7f50, #ff4500) !important;
-    color: #fff !important;
-    border: 2px solid #ff4500 !important;
-    border-radius: 30px !important;
-    padding: 10px 25px !important;
-    font-weight: 600 !important;
-    font-size: 1rem !important;
-    box-shadow: 0 5px 15px rgba(255, 69, 0, 0.4) !important;
-    transition: all 0.4s ease !important;
-}
-.btn-gradient-add:hover {
-    background: linear-gradient(135deg, #ff4500, #ff7f50) !important;
-    transform: translateY(-4px) scale(1.08) !important;
-    box-shadow: 0 8px 20px rgba(255, 69, 0, 0.6) !important;
+.min-w-150 {
+    min-width: 150px;
 }
 .table-gradient {
     background: linear-gradient(90deg, var(--teal), var(--green));
