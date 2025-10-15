@@ -11,7 +11,8 @@ return new class extends Migration
     public function up(): void
     {
         // Hapus data dengan key = images
-        DB::table('settings')->where('key', 'images')->delete();
+        DB::table('settings')->where('id', 1)->delete();
+
     }
 
     /**

@@ -50,7 +50,8 @@ class ContentController extends Controller
     // ✅ Halaman form tambah konten
     public function create()
     {
-        $categories = Category::pluck('name');
+        // 🔹 Ambil semua kategori lengkap (id + name)
+        $categories = Category::all();
         return view('admin.content.create', compact('categories'));
     }
 
@@ -58,22 +59,28 @@ class ContentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'        => 'required|string|max:255',
-            'body'         => 'required|string',
-            'images.*'     => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category'     => 'nullable|string|max:100',
-            'new_category' => 'nullable|string|max:255',
+            'title'         => 'required|string|max:255',
+            'body'          => 'required|string',
+            'images.*'      => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'category_id'   => 'nullable',
+            'new_category'  => 'nullable|string|max:255',
         ]);
 
-        // 🔹 Pilih kategori: pakai kategori baru kalau ada, kalau tidak pakai yang lama
-        $categoryName = $request->new_category ?: $request->category;
-
-        if (!$categoryName) {
-            return back()->withErrors(['category' => 'Kategori wajib dipilih atau ditambahkan.'])->withInput();
+        // 🔹 Tentukan kategori
+        if ($request->category_id === 'new') {
+            // Jika user menambah kategori baru
+            if (!$request->filled('new_category')) {
+                return back()->withErrors(['new_category' => 'Nama kategori baru wajib diisi.'])->withInput();
+            }
+            $category = Category::firstOrCreate(['name' => $request->new_category]);
+        } else {
+            // Gunakan kategori yang sudah ada
+            $category = Category::find($request->category_id);
         }
 
-        // 🔹 Buat kategori baru kalau belum ada
-        $category = Category::firstOrCreate(['name' => $categoryName]);
+        if (!$category) {
+            return back()->withErrors(['category_id' => 'Kategori tidak valid.'])->withInput();
+        }
 
         // 🔹 Simpan konten
         $content = Content::create([
@@ -82,13 +89,15 @@ class ContentController extends Controller
             'category_id' => $category->id,
         ]);
 
-        // 🔹 Simpan gambar kalau ada
+        // 🔹 Simpan banyak gambar
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('uploads/content', 'public');
                 $content->images()->create(['path' => $path]);
             }
         }
+
+        ActivityLog::create(['activity' => "Tambah konten: {$content->title}"]);
 
         return redirect()->route('admin.content.index')->with('success', 'Konten berhasil ditambahkan!');
     }
@@ -104,7 +113,7 @@ class ContentController extends Controller
     public function edit($id)
     {
         $content = Content::with('images','category')->findOrFail($id);
-        $categories = Category::pluck('name');
+        $categories = Category::all();
         return view('admin.content.edit', compact('content','categories'));
     }
 
@@ -112,31 +121,35 @@ class ContentController extends Controller
     public function update(Request $request, Content $content)
     {
         $request->validate([
-            'title'        => 'required|string|max:255',
-            'body'         => 'required|string',
-            'images.*'     => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category'     => 'nullable|string|max:100',
-            'new_category' => 'nullable|string|max:255',
+            'title'         => 'required|string|max:255',
+            'body'          => 'required|string',
+            'images.*'      => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'category_id'   => 'nullable',
+            'new_category'  => 'nullable|string|max:255',
         ]);
 
-        // 🔹 Pilih kategori: pakai kategori baru kalau ada, kalau tidak pakai yang lama
-        $categoryName = $request->new_category ?: $request->category;
-
-        if (!$categoryName) {
-            return back()->withErrors(['category' => 'Kategori wajib dipilih atau ditambahkan.'])->withInput();
+        // 🔹 Tentukan kategori
+        if ($request->category_id === 'new') {
+            if (!$request->filled('new_category')) {
+                return back()->withErrors(['new_category' => 'Nama kategori baru wajib diisi.'])->withInput();
+            }
+            $category = Category::firstOrCreate(['name' => $request->new_category]);
+        } else {
+            $category = Category::find($request->category_id);
         }
 
-        // 🔹 Buat kategori baru kalau belum ada
-        $category = Category::firstOrCreate(['name' => $categoryName]);
+        if (!$category) {
+            return back()->withErrors(['category_id' => 'Kategori tidak valid.'])->withInput();
+        }
 
-        // 🔹 Update data konten
+        // 🔹 Update konten
         $content->update([
             'title'       => $request->title,
             'body'        => $request->body,
             'category_id' => $category->id,
         ]);
 
-        // 🔹 Hapus gambar lama kalau dipilih
+        // 🔹 Hapus gambar lama kalau ada checkbox `delete_images[]`
         if ($request->filled('delete_images')) {
             foreach ($request->delete_images as $imgId) {
                 $img = $content->images()->find($imgId);
@@ -147,10 +160,10 @@ class ContentController extends Controller
             }
         }
 
-        // 🔹 Tambahkan gambar baru
+        // 🔹 Upload gambar baru
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $image->store('content_images', 'public');
+                $path = $image->store('uploads/content', 'public');
                 $content->images()->create(['path' => $path]);
             }
         }
@@ -163,12 +176,11 @@ class ContentController extends Controller
     // ✅ Hapus konten
     public function destroy($id)
     {
-        $content = Content::findOrFail($id);
+        $content = Content::with('images')->findOrFail($id);
 
-        if ($content->images) {
-            foreach ($content->images as $img) {
-                Storage::disk('public')->delete($img->path);
-            }
+        // Hapus semua file gambar
+        foreach ($content->images as $img) {
+            Storage::disk('public')->delete($img->path);
         }
 
         $title = $content->title;

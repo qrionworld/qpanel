@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>@yield('title', 'Admin Dashboard')</title>
 
-    {{-- Bootstrap & Icons --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    @stack('styles')
 
     <style>
         :root {
@@ -140,7 +144,6 @@
             background: rgba(25, 25, 25, 0.7);
         }
 
-        /* Dark Mode Button */
         .btn-darkmode {
             background: linear-gradient(135deg, var(--teal), var(--green));
             border: none;
@@ -175,127 +178,85 @@
             <i class="bi bi-file-earmark-text"></i><span>Blog</span>
         </a>
 
+        <a href="{{ route('admin.kegiatan.index') }}" class="{{ request()->routeIs('admin.kegiatan.*') ? 'active' : '' }}">
+            <i class="bi bi-calendar-event"></i><span>Kegiatan</span>
+        </a>
+
+        <a href="{{ route('admin.team.index') }}" class="{{ request()->routeIs('admin.team.*') ? 'active' : '' }}">
+            <i class="bi bi-people"></i><span>Team</span>
+        </a>
+
         <div class="sidebar-footer">
             © 2025 Admin Panel
         </div>
     </div>
 
     {{-- Main Content --}}
-    <div class="content flex-grow-1">
- 
-<!-- Navbar -->
-<div class="navbar-custom d-flex justify-content-between align-items-center px-3 shadow-sm">
-    <!-- Kiri: bisa kosong atau breadcrumb -->
-    <div class="navbar-left">
-        <span class="fw-bold">Admin Panel</span>
-    </div>
+    <div class="content flex-grow-1 p-3">
+        {{-- Navbar --}}
+        <div class="navbar-custom d-flex justify-content-between align-items-center shadow-sm">
+            <span class="fw-bold">Admin Panel</span>
 
-    <!-- Kanan: notifikasi, dark mode, profile/admin -->
-    <div class="d-flex align-items-center gap-2 navbar-right">
-        <!-- Notifikasi -->
-        <div class="dropdown">
-            <button class="btn btn-light position-relative rounded-circle shadow-sm p-2" data-bs-toggle="dropdown" title="Notifikasi">
-                <i class="bi bi-bell fs-5"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3" style="width: 300px; max-height: 350px; overflow-y: auto;">
-                <li class="dropdown-header fw-bold">🔔 Notifikasi</li>
-                @forelse($notifications as $notif)
-                <li class="dropdown-item small d-flex flex-column">
-                    <span><i class="bi bi-activity text-primary me-2"></i>{{ $notif->activity }}</span>
-                    <small class="text-muted">{{ $notif->created_at->diffForHumans() }}</small>
-                </li>
-                @empty
-                <li><span class="dropdown-item small text-muted">Tidak ada notifikasi</span></li>
-                @endforelse
-                <li><hr class="dropdown-divider"></li>
-                <li><a href="{{ route('admin.activity.index') }}" class="dropdown-item text-center">Lihat semua</a></li>
-            </ul>
+            <div class="d-flex align-items-center gap-2">
+                {{-- Notifikasi --}}
+                <div class="dropdown">
+                    <button class="btn btn-light position-relative rounded-circle shadow-sm p-2" data-bs-toggle="dropdown" title="Notifikasi">
+                        <i class="bi bi-bell fs-5"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3" style="width: 300px; max-height: 350px; overflow-y: auto;">
+                        <li class="dropdown-header fw-bold">🔔 Notifikasi</li>
+                        @forelse($notifications ?? [] as $notif)
+                            <li class="dropdown-item small d-flex flex-column">
+                                <span><i class="bi bi-activity text-primary me-2"></i>{{ $notif->activity }}</span>
+                                <small class="text-muted">{{ $notif->created_at->diffForHumans() }}</small>
+                            </li>
+                        @empty
+                            <li><span class="dropdown-item small text-muted">Tidak ada notifikasi</span></li>
+                        @endforelse
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a href="{{ route('admin.activity.index') }}" class="dropdown-item text-center">Lihat semua</a></li>
+                    </ul>
+                </div>
+
+                {{-- Profile --}}
+                <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                        @if(Auth::user()->photo)
+                            <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="profile" class="rounded-circle me-2" width="40" height="40">
+                        @else
+                            <img src="https://i.pravatar.cc/40?u={{ Auth::user()->email }}" alt="profile" class="rounded-circle me-2" width="40" height="40">
+                        @endif
+                        <span class="fw-semibold d-none d-md-inline">{{ Auth::user()->name }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3">
+                        <li><a class="dropdown-item" href="{{ route('admin.profile.index') }}"><i class="bi bi-person me-2"></i> Profil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Keluar
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-
-        <!-- Profile/Admin -->
-        <div class="dropdown">
-            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
-                @if(Auth::user()->photo)
-                <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="profile" class="rounded-circle me-2" width="40" height="40">
-                @else
-                <img src="https://i.pravatar.cc/40?u={{ Auth::user()->email }}" alt="profile" class="rounded-circle me-2" width="40" height="40">
-                @endif
-                <span class="fw-semibold d-none d-md-inline">{{ Auth::user()->name }}</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3">
-                <li><a class="dropdown-item" href="{{ route('admin.profile.index') }}"><i class="bi bi-person me-2"></i> Profil</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <form action="{{ route('logout') }}" method="POST" class="m-0">
-                        @csrf
-                        <button type="submit" class="dropdown-item text-danger">
-                            <i class="bi bi-box-arrow-right me-2"></i> Keluar
-                        </button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<style>
-/* Navbar */
-.navbar-custom {
-    position: sticky;
-    top: 0;
-    z-index: 1050;
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(12px);
-    border-radius: 12px;
-    padding: 8px 16px;
-    transition: all 0.3s ease;
-}
-
-/* Konten utama agar navbar tidak menutupi */
-.content {
-    flex-grow: 1;
-    padding: 20px;
-}
-
-body.dark-mode .navbar-custom {
-    background: rgba(25,25,25,0.85);
-}
-
-.btn-darkmode {
-    background: linear-gradient(135deg, #14a09f, #5dc56b);
-    border: none;
-    color: white;
-    border-radius: 50px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.btn-darkmode:hover {
-    transform: rotate(15deg) scale(1.1);
-    box-shadow: 0 5px 12px rgba(0,0,0,0.25);
-}
-
-.dropdown-toggle::after { display: none; }
-.dropdown-menu { min-width: 220px; }
-.dropdown-item:hover { background-color: rgba(20,160,159,0.15); border-radius: 8px; }
-</style>
-
 
         <hr>
         @yield('content')
     </div>
 
-        <script>
+    <script>
         function toggleSidebar() {
-            const sidebar = document.getElementById("sidebar");
-            sidebar.classList.toggle("collapsed");
+            document.getElementById("sidebar").classList.toggle("collapsed");
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @yield('scripts')
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    @stack('scripts')
 </body>
 </html>

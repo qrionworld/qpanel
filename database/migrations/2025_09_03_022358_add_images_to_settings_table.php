@@ -9,7 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->longText('images')->nullable()->after('value'); 
+            $table->longText('images')->nullable(); 
+
             // simpan sebagai JSON path gambar
         });
     }

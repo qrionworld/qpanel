@@ -32,13 +32,18 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        // Validasi input
-        $request->validate([
-            'name'     => 'required|string|max:100',
-            'email'    => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6|confirmed',
-            'photo'    => 'nullable|image|mimes:jpg,jpeg,png|max:10240', // max 10MB
-        ]);
+        // Validasi input (tanpa confirmed password)
+        $rules = [
+            'name'  => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+        ];
+
+        if ($request->filled('password')) {
+            $rules['password'] = 'min:6';
+        }
+
+        $request->validate($rules);
 
         // Update nama & email
         $user->name  = $request->name;
@@ -51,12 +56,10 @@ class ProfileController extends Controller
 
         // Update foto profil
         if ($request->hasFile('photo')) {
-            // Hapus foto lama jika ada
             if ($user->photo && Storage::disk('public')->exists($user->photo)) {
                 Storage::disk('public')->delete($user->photo);
             }
 
-            // Simpan foto baru
             $path = $request->file('photo')->store('profile', 'public');
             $user->photo = $path;
         }

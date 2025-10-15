@@ -54,7 +54,7 @@
                 <tbody>
                     @forelse($contents as $index => $content)
                         <tr>
-                            <td>{{ $index + 1 }}</td>
+                            <td class="text-center">{{ $index + 1 }}</td>
                             <td>
                                 @if($content->images->count() > 0)
                                     <img src="{{ asset('storage/' . $content->images->first()->path) }}" 
@@ -67,18 +67,23 @@
                             </td>
                             <td>{{ $content->title }}</td>
                             <td>{{ $content->category->name ?? '-' }}</td>
+
+                            {{-- Deskripsi dengan efek Quill dan tombol detail --}}
                             <td>
-                                <div class="ql-editor small" style="max-height:70px; overflow:hidden;">
-                                    {!! Str::limit($content->body, 120) !!}
+                                <div class="padding-top:10px; display:block" 
+                                     style="max-height:70px; overflow:hidden; cursor:pointer;"
+                                     data-bs-toggle="modal" 
+                                     data-bs-target="#descModal"
+                                     data-body="{{ e($content->body) }}">
+                                    {{ Str::limit(strip_tags($content->body), 120) }}
+
                                 </div>
                             </td>
-                            <td>{{ $content->created_at->timezone('Asia/Jakarta')->translatedFormat('d M Y H:i') }}</td>
 
+                            <td>{{ $content->created_at->timezone('Asia/Jakarta')->translatedFormat('d M Y H:i') }}</td>
                             <td class="text-center">
                                 <a href="{{ route('admin.content.show', $content->id) }}" class="btn btn-sm btn-info text-white shadow-sm">Detail</a>
                                 <a href="{{ route('admin.content.edit', $content->id) }}" class="btn btn-sm btn-warning shadow-sm">Edit</a>
-
-                                {{-- Form DELETE langsung --}}
                                 <form action="{{ route('admin.content.destroy', $content->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus konten ini?')">
                                     @csrf
                                     @method('DELETE')
@@ -101,6 +106,19 @@
         </div>
     </div>
 </div>
+
+{{-- Modal Deskripsi Lengkap --}}
+<div class="modal fade" id="descModal" tabindex="-1" aria-labelledby="descModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header bg-gradient text-white" style="background: linear-gradient(90deg, #14A09F, #5DC56B);">
+              <h5 class="modal-title" id="descModalLabel">Deskripsi Lengkap</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body ql-editor" id="descContent" style="max-height: 70vh; overflow-y: auto;"></div>
+      </div>
+  </div>
+</div>
 @endsection
 
 @push('styles')
@@ -110,19 +128,59 @@
     --teal: #14A09F;
     --green: #5DC56B;
 }
+
 .text-gradient {
     background: linear-gradient(90deg, var(--teal), var(--green));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
 .min-w-150 {
     min-width: 150px;
 }
+
 .table-gradient {
     background: linear-gradient(90deg, var(--teal), var(--green));
 }
-.card {
-    border-radius: 16px;
+
+/* ✅ Perataan tabel & deskripsi */
+.table td, .table th {
+    vertical-align: middle !important;
+}
+.desc-cell p { margin: 0 !important; }
+.desc-cell ul, .desc-cell ol { padding-left: 20px; margin: 0; }
+
+/* Hover efek */
+.desc-cell:hover {
+    background: rgba(20, 160, 159, 0.05);
+    border-radius: 6px;
+}
+
+/* Modal */
+.modal-content {
+    border-radius: 14px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const descModal = document.getElementById('descModal');
+    const descContent = document.getElementById('descContent');
+
+    descModal.addEventListener('show.bs.modal', event => {
+        const trigger = event.relatedTarget;
+        const fullBody = trigger.getAttribute('data-body');
+        descContent.innerHTML = decodeHTMLEntities(fullBody) || '<em>Tidak ada deskripsi</em>';
+    });
+
+    function decodeHTMLEntities(text) {
+    var textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+}
+});
+</script>
 @endpush
