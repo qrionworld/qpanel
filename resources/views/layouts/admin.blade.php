@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Dashboard')</title>
 
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     @stack('styles')
 
@@ -17,33 +17,31 @@
         :root {
             --teal: #14A09F;
             --green: #5DC56B;
-            --dark: #121212;
-            --light: #f8f9fa;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, var(--teal), var(--green));
         }
 
         body {
             display: flex;
             min-height: 100vh;
-            background: var(--light);
-            font-family: "Segoe UI", sans-serif;
-            transition: background 0.3s, color 0.3s;
+            font-family: "Inter", "Segoe UI", sans-serif;
+            color: #222;
+            background: #f3f4f6;
+            overflow-x: hidden;
         }
 
-        body.dark-mode {
-            background: var(--dark);
-            color: #f1f1f1;
-        }
-
-        /* Sidebar */
+        /* ========== SIDEBAR ========== */
         .sidebar {
             width: 250px;
-            background: linear-gradient(160deg, var(--teal), var(--green));
-            color: white;
-            flex-shrink: 0;
+            background: var(--gradient);
+            color: #fff;
             display: flex;
             flex-direction: column;
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
             transition: width 0.3s ease;
+            z-index: 1000;
         }
 
         .sidebar.collapsed {
@@ -51,52 +49,27 @@
         }
 
         .sidebar-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px;
-        }
-
-        .sidebar-header h4 {
+            padding: 20px;
+            font-weight: 700;
             font-size: 1.2rem;
-            margin: 0;
-            font-weight: bold;
-            color: #fff;
-            white-space: nowrap;
-        }
-
-        .sidebar.collapsed .sidebar-header h4 {
-            display: none;
-        }
-
-        .collapse-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.4rem;
-            cursor: pointer;
-            transition: transform 0.3s, color 0.3s;
-        }
-
-        .collapse-btn:hover {
-            transform: rotate(90deg);
-            color: #5dc56b;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
         }
 
         .sidebar a {
             display: flex;
             align-items: center;
             padding: 12px 20px;
-            margin: 4px 10px;
-            color: #cfcfcf;
+            margin: 6px 12px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
             font-weight: 500;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
 
         .sidebar a i {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-right: 12px;
             min-width: 25px;
             text-align: center;
@@ -105,59 +78,97 @@
         .sidebar a:hover {
             background: rgba(255, 255, 255, 0.15);
             color: #fff;
-            transform: translateX(5px);
         }
 
         .sidebar a.active {
-            background: #14a09f;
-            color: #fff !important;
-            box-shadow: 0 2px 10px rgba(20, 160, 159, 0.6);
-        }
-
-        .sidebar.collapsed a span {
-            display: none;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
 
         .sidebar-footer {
             margin-top: auto;
             padding: 15px;
-            text-align: center;
             font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.8);
+            opacity: 0.9;
+            text-align: center;
         }
 
-        /* Navbar */
+        /* ========== MAIN CONTENT ========== */
+        .content {
+            flex-grow: 1;
+            padding: 30px;
+            background: #f9fafb;
+            transition: all 0.4s ease;
+            z-index: 1;
+        }
+
+        /* ========== NAVBAR ========== */
         .navbar-custom {
-            padding: 12px 25px;
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(12px);
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-            margin-bottom: 15px;
-            position: sticky;
-            top: 10px;
-            z-index: 100;
-            transition: background 0.3s ease;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            padding: 12px 24px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
         }
 
-        body.dark-mode .navbar-custom {
-            background: rgba(25, 25, 25, 0.7);
+        .navbar-custom h5 {
+            font-weight: 700;
+            color: #0f172a;
         }
 
-        .btn-darkmode {
-            background: linear-gradient(135deg, var(--teal), var(--green));
+        /* ========== DROPDOWN (NOTIF & PROFILE) ========== */
+        .dropdown-menu {
+            border-radius: 14px !important;
             border: none;
-            color: white;
-            padding: 8px 14px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            z-index: 2000 !important; /* memastikan dropdown di atas card dan grafik */
         }
 
-        .btn-darkmode:hover {
-            transform: rotate(15deg) scale(1.1);
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+        .dropdown-item:hover {
+            background: var(--gradient);
+            color: #fff;
+        }
+
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--teal);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--green);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 992px) {
+            .sidebar {
+                position: fixed;
+                z-index: 1500;
+                height: 100%;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+        }
+
+        /* ========== FIX: Dropdown Tertimpa Card/Grafik ========== */
+        .stat-card,
+        .glass-card,
+        .card {
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
@@ -165,10 +176,7 @@
 <body>
     {{-- Sidebar --}}
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h4>⚙️ Admin</h4>
-            <button class="collapse-btn" onclick="toggleSidebar()">☰</button>
-        </div>
+        <div class="sidebar-header">⚙️ Admin</div>
 
         <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <i class="bi bi-bar-chart"></i><span>Dashboard</span>
@@ -192,18 +200,22 @@
     </div>
 
     {{-- Main Content --}}
-    <div class="content flex-grow-1 p-3">
+    <div class="content">
         {{-- Navbar --}}
-        <div class="navbar-custom d-flex justify-content-between align-items-center shadow-sm">
-            <span class="fw-bold">Admin Panel</span>
+        <div class="navbar-custom">
+            <h5 class="mb-0">Admin Panel</h5>
 
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-3">
+
                 {{-- Notifikasi --}}
                 <div class="dropdown">
-                    <button class="btn btn-light position-relative rounded-circle shadow-sm p-2" data-bs-toggle="dropdown" title="Notifikasi">
+                    <button class="btn btn-light position-relative rounded-circle shadow-sm p-2"
+                        data-bs-toggle="dropdown" title="Notifikasi">
                         <i class="bi bi-bell fs-5"></i>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3" style="width: 300px; max-height: 350px; overflow-y: auto;">
+
+                    <ul class="dropdown-menu dropdown-menu-end"
+                        style="width: 300px; max-height: 350px; overflow-y: auto;">
                         <li class="dropdown-header fw-bold">🔔 Notifikasi</li>
                         @forelse($notifications ?? [] as $notif)
                             <li class="dropdown-item small d-flex flex-column">
@@ -220,16 +232,21 @@
 
                 {{-- Profile --}}
                 <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
+                        data-bs-toggle="dropdown">
                         @if(Auth::user()->photo)
-                            <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="profile" class="rounded-circle me-2" width="40" height="40">
+                            <img src="{{ asset('storage/' . Auth::user()->photo) }}" class="rounded-circle me-2"
+                                width="40" height="40">
                         @else
-                            <img src="https://i.pravatar.cc/40?u={{ Auth::user()->email }}" alt="profile" class="rounded-circle me-2" width="40" height="40">
+                            <img src="https://i.pravatar.cc/40?u={{ Auth::user()->email }}" class="rounded-circle me-2"
+                                width="40" height="40">
                         @endif
                         <span class="fw-semibold d-none d-md-inline">{{ Auth::user()->name }}</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg rounded-3">
-                        <li><a class="dropdown-item" href="{{ route('admin.profile.index') }}"><i class="bi bi-person me-2"></i> Profil</a></li>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ route('admin.profile.index') }}">
+                            <i class="bi bi-person me-2"></i> Profil</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form action="{{ route('logout') }}" method="POST" class="m-0">
@@ -244,19 +261,19 @@
             </div>
         </div>
 
-        <hr>
+        {{-- Konten Halaman --}}
         @yield('content')
     </div>
 
+    <!-- Sidebar Toggle Script -->
     <script>
         function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("collapsed");
+            document.getElementById("sidebar").classList.toggle("show");
         }
     </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
     @stack('scripts')
 </body>
 </html>

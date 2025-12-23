@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\View;
+use Carbon\Carbon;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -30,6 +32,8 @@ public function boot()
         $notifications = ActivityLog::latest()->take(5)->get();
         $view->with('notifications', $notifications);
     });
+
+      Carbon::setLocale('id');
 }
 
 

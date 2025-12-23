@@ -3,20 +3,19 @@
 @section('title', 'Daftar Team')
 
 @section('content')
- 
 <div class="container py-4">
 
     {{-- 🔹 Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="fw-bold mb-0 text-gradient">
-            <i class="bi bi-people-fill me-2"></i> Daftar Team
+            <i class="bi bi-people-fill me-2 text-primary"></i> Daftar Team
         </h2>
         <a href="{{ route('admin.team.create') }}" class="btn btn-primary shadow-sm">
             <i class="bi bi-person-plus me-1"></i> Tambah Anggota
         </a>
     </div>
 
-    {{-- 🔹 Alert sukses --}}
+    {{-- 🔹 Alert --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
             {{ session('success') }}
@@ -24,68 +23,68 @@
         </div>
     @endif
 
-    {{-- 🔹 Card tabel --}}
+    {{-- 🔹 Tabel Team --}}
     <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 text-center">
-                <thead class="table-gradient text-white">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-gradient text-white text-center">
                     <tr>
-                        <th width="10%">Foto</th>
-                        <th width="25%">Nama</th>
-                        <th width="20%">Jabatan</th>
-                        <th width="30%">Deskripsi</th>
-                        <th width="15%">Aksi</th>
+                        <th style="width: 15%;">Foto</th>
+                        <th style="width: 20%;">Nama</th>
+                        <th style="width: 20%;">Jabatan</th>
+                        <th style="width: 30%;">Deskripsi</th>
+                        <th style="width: 15%;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($teams as $team)
                         <tr>
                             {{-- Foto --}}
-                            <td>
+                            <td class="text-center">
                                 @if($team->foto)
                                     <img src="{{ asset('storage/' . $team->foto) }}" 
                                          alt="Foto {{ $team->nama }}" 
-                                         class="rounded-circle shadow-sm"
-                                         style="width:60px; height:60px; object-fit:cover;">
+                                         class="rounded-3 shadow-sm"
+                                         style="width:80px; height:60px; object-fit:cover;">
                                 @else
                                     <span class="text-muted fst-italic">Tidak ada</span>
                                 @endif
                             </td>
 
                             {{-- Nama --}}
-                            <td class="fw-semibold align-middle">{{ $team->nama }}</td>
+                            <td><strong>{{ $team->nama }}</strong></td>
 
                             {{-- Jabatan --}}
-                            <td class="text-muted align-middle">{{ $team->jabatan }}</td>
+                            <td class="text-muted">{{ $team->jabatan }}</td>
 
                             {{-- Deskripsi --}}
-                            <td class="text-muted align-middle text-start deskripsi-cell"
-                                style="cursor:pointer;"
+                            <td class="text-muted text-truncate deskripsi-cell"
+                                style="cursor:pointer; max-width:250px;"
                                 data-bs-toggle="modal"
                                 data-bs-target="#modalDeskripsi"
                                 data-nama="{{ $team->nama }}"
-                                data-deskripsi="{!! htmlspecialchars($team->deskripsi, ENT_QUOTES) !!}"
-                                {!! Str::limit(strip_tags($team->deskripsi), 80, '...') !!}
+                                data-deskripsi="{{ htmlentities($team->deskripsi) }}">
+                                {!! Str::limit(strip_tags($team->deskripsi), 100) !!}
                                 <div class="text-primary small fst-italic">Klik untuk lihat</div>
                             </td>
 
                             {{-- Aksi --}}
-                            <td class="align-middle">
+                            <td class="text-center">
                                 <div class="d-flex justify-content-center gap-2 flex-wrap">
                                     <a href="{{ route('admin.team.show', $team->id) }}" 
-                                       class="btn btn-sm btn-info text-white shadow-sm d-flex align-items-center gap-1">
-                                        <i class="bi bi-eye"></i> Detail
+                                       class="btn btn-sm btn-info text-white shadow-sm">
+                                        <i class="bi bi-eye"></i>
                                     </a>
                                     <a href="{{ route('admin.team.edit', $team->id) }}" 
-                                       class="btn btn-sm btn-warning text-dark shadow-sm d-flex align-items-center gap-1">
-                                        <i class="bi bi-pencil-square"></i> Edit
+                                       class="btn btn-sm btn-warning text-dark shadow-sm">
+                                        <i class="bi bi-pencil-square"></i>
                                     </a>
                                     <form action="{{ route('admin.team.destroy', $team->id) }}" 
                                           method="POST" class="d-inline">
                                         @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-danger shadow-sm d-flex align-items-center gap-1"
+                                        <button class="btn btn-sm btn-danger shadow-sm"
                                                 onclick="return confirm('Yakin ingin menghapus anggota ini?')">
-                                            <i class="bi bi-trash"></i> Hapus
+                                            <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -113,38 +112,40 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="modalDeskripsiBody" style="max-height:70vh; overflow-y:auto;">
-                {{-- Konten akan diisi lewat JS --}}
+                {{-- Konten dinamis dari JS --}}
             </div>
         </div>
     </div>
 </div>
 
-{{-- 🔹 Script Modal --}}
+{{-- 🔹 Script --}}
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const modalBody = document.getElementById('modalDeskripsiBody');
-    const modalTitle = document.getElementById('modalDeskripsiLabel');
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalBody = document.getElementById('modalDeskripsiBody');
+        const modalTitle = document.getElementById('modalDeskripsiLabel');
+        const deskripsiCells = document.querySelectorAll('.deskripsi-cell');
 
-    document.querySelectorAll('.deskripsi-cell').forEach(cell => {
-        cell.addEventListener('click', () => {
-            const nama = cell.dataset.nama;
-            const deskripsi = cell.dataset.deskripsi;
-            modalTitle.innerText = `Deskripsi - ${nama}`;
-            modalBody.innerHTML = decodeHtml(deskripsi);
+        deskripsiCells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                const nama = cell.getAttribute('data-nama');
+                const deskripsi = cell.getAttribute('data-deskripsi');
+
+                modalTitle.innerText = nama;
+                modalBody.innerHTML = decodeHtml(deskripsi);
+            });
         });
-    });
 
-    function decodeHtml(html) {
-        const txt = document.createElement("textarea");
-        txt.innerHTML = html;
-        return txt.value;
-    }
-});
+        function decodeHtml(html) {
+            const txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
+        }
+    });
 </script>
 @endpush
 
-{{-- 🔹 Styling tambahan --}}
+{{-- 🔹 Style --}}
 @push('styles')
 <style>
     :root {
@@ -162,25 +163,46 @@ document.addEventListener('DOMContentLoaded', () => {
         background: linear-gradient(90deg, var(--teal), var(--green));
     }
 
-    th, td {
+    .table td, .table th {
         vertical-align: middle !important;
+        text-align: center;
+    }
+
+    .table td {
+        padding: 0.9rem 1rem !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .deskripsi-cell {
+        text-align: left !important;
     }
 
     .deskripsi-cell:hover {
-        background-color: #f8f9fa;
+        background-color: #f0f8ff;
         transition: 0.2s;
     }
 
-    .modal-body {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: #333;
+    .card {
+        border-radius: 16px;
     }
 
-    .modal-body img {
-        max-width: 100%;
-        border-radius: 8px;
-        margin: 0.5rem 0;
+    .btn-info {
+        background-color: #0dcaf0;
+        border: none;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border: none;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
     }
 </style>
 @endpush

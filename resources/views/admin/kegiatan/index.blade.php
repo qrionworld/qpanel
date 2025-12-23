@@ -5,65 +5,61 @@
 @section('content')
 <div class="container py-4">
 
-    {{-- 🔹 Header --}}
+    {{-- 🌟 Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h2 class="fw-bold mb-0 text-gradient">
-            <i class="bi bi-calendar3 me-2 text-primary"></i> Daftar Kegiatan
+            <i class="bi bi-calendar3 me-2"></i> Daftar Kegiatan
         </h2>
         <a href="{{ route('admin.kegiatan.create') }}" class="btn btn-primary shadow-sm">
             <i class="bi bi-plus-circle me-1"></i> Tambah Kegiatan
         </a>
     </div>
 
-    {{-- 🔹 Alert --}}
-    @if(session('success'))
+    {{-- ✅ Alert Sukses --}}
+    @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3" role="alert">
             {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    {{-- 🔹 Tabel Kegiatan --}}
+    {{-- 📋 Tabel Daftar Kegiatan --}}
     <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-gradient text-white text-center">
                     <tr>
-                        <th style="width: 15%;">Foto</th>
-                        <th style="width: 20%;">Judul</th>
-                        <th style="width: 30%;">Deskripsi</th>
-                        <th style="width: 15%;">Tanggal</th>
-                        <th style="width: 20%;">Aksi</th>
+                        <th width="15%">Foto</th>
+                        <th width="20%">Judul</th>
+                        <th width="30%">Deskripsi</th>
+                        <th width="15%">Tanggal</th>
+                        <th width="20%">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($kegiatan as $item)
                         <tr>
-                            {{-- Foto --}}
+                            {{-- 🖼️ Foto --}}
                             <td class="text-center">
-    @php
-        $fotos = json_decode($item->foto, true);
-    @endphp
+                                @php $fotos = json_decode($item->foto, true); @endphp
+                                @if (!empty($fotos) && is_array($fotos))
+                                    <div class="d-flex justify-content-center flex-wrap gap-2">
+                                        @foreach ($fotos as $foto)
+                                            <img src="{{ asset('storage/' . $foto) }}" 
+                                                 alt="Foto {{ $item->judul }}" 
+                                                 class="rounded-3 shadow-sm"
+                                                 style="width:80px; height:60px; object-fit:cover;">
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="text-muted fst-italic">Tidak ada</span>
+                                @endif
+                            </td>
 
-    @if(!empty($fotos) && is_array($fotos))
-        <div class="d-flex justify-content-center flex-wrap gap-2">
-            @foreach($fotos as $foto)
-                <img src="{{ asset('storage/' . $foto) }}" 
-                     alt="Foto {{ $item->judul }}" 
-                     class="rounded-3 shadow-sm"
-                     style="width:80px; height:60px; object-fit:cover;">
-            @endforeach
-        </div>
-    @else
-        <span class="text-muted fst-italic">Tidak ada</span>
-    @endif
-</td>
-
-
-                            {{-- Judul --}}
+                            {{-- 📌 Judul --}}
                             <td><strong>{{ $item->judul }}</strong></td>
 
-                            {{-- Deskripsi (klik untuk popup) --}}
+                            {{-- 📝 Deskripsi --}}
                             <td class="text-muted text-truncate deskripsi-cell"
                                 style="cursor:pointer; max-width:250px;"
                                 data-bs-toggle="modal"
@@ -74,28 +70,27 @@
                                 <div class="text-primary small fst-italic">Klik untuk lihat</div>
                             </td>
 
-                            {{-- Tanggal --}}
+                            {{-- 📅 Tanggal --}}
                             <td class="text-center">
                                 {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d M Y') }}
                             </td>
 
-                            {{-- Aksi --}}
+                            {{-- ⚙️ Aksi --}}
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-2 flex-wrap">
                                     <a href="{{ route('admin.kegiatan.show', $item->id) }}" 
                                        class="btn btn-sm btn-info text-white shadow-sm">
-                                        <i class="bi bi-eye"></i> Detail
+                                        <i class="bi bi-eye"></i>
                                     </a>
                                     <a href="{{ route('admin.kegiatan.edit', $item->id) }}" 
                                        class="btn btn-sm btn-warning text-dark shadow-sm">
-                                        <i class="bi bi-pencil-square"></i> Edit
+                                        <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <form action="{{ route('admin.kegiatan.destroy', $item->id) }}" 
-                                          method="POST" class="d-inline">
+                                    <form action="{{ route('admin.kegiatan.destroy', $item->id) }}" method="POST" class="d-inline">
                                         @csrf @method('DELETE')
                                         <button class="btn btn-sm btn-danger shadow-sm"
                                                 onclick="return confirm('Yakin ingin menghapus kegiatan ini?')">
-                                            <i class="bi bi-trash"></i> Hapus
+                                            <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -114,22 +109,21 @@
     </div>
 </div>
 
-{{-- 🔹 Modal Deskripsi --}}
+{{-- 🔍 Modal Deskripsi --}}
 <div class="modal fade" id="modalDeskripsi" tabindex="-1" aria-labelledby="modalDeskripsiLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header bg-gradient text-white" style="background: linear-gradient(90deg, #14A09F, #5DC56B);">
+            <div class="modal-header bg-gradient text-white" 
+                 style="background: linear-gradient(90deg, #14A09F, #5DC56B);">
                 <h5 class="modal-title fw-bold" id="modalDeskripsiLabel">Deskripsi Kegiatan</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body" id="modalDeskripsiBody" style="max-height:70vh; overflow-y:auto;">
-                {{-- Konten dinamis dari JS --}}
-            </div>
+            <div class="modal-body" id="modalDeskripsiBody" style="max-height:70vh; overflow-y:auto;"></div>
         </div>
     </div>
 </div>
 
-{{-- 🔹 Script --}}
+{{-- 💡 Script --}}
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -139,11 +133,8 @@
 
         deskripsiCells.forEach(cell => {
             cell.addEventListener('click', () => {
-                const judul = cell.getAttribute('data-judul');
-                const deskripsi = cell.getAttribute('data-deskripsi');
-
-                modalTitle.innerText = judul;
-                modalBody.innerHTML = decodeHtml(deskripsi);
+                modalTitle.innerText = cell.getAttribute('data-judul');
+                modalBody.innerHTML = decodeHtml(cell.getAttribute('data-deskripsi'));
             });
         });
 
@@ -156,7 +147,7 @@
 </script>
 @endpush
 
-{{-- 🔹 Style --}}
+{{-- 🎨 Style --}}
 @push('styles')
 <style>
     :root {
@@ -179,13 +170,9 @@
         text-align: center;
     }
 
-    .table td {
-        padding: 0.9rem 1rem !important;
-    }
-
     .table-hover tbody tr:hover {
         background-color: #f8f9fa;
-        transition: background-color 0.2s ease-in-out;
+        transition: 0.2s ease-in-out;
     }
 
     .deskripsi-cell {
